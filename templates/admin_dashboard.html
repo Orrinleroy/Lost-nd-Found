@@ -34,14 +34,21 @@
                 <tbody>
                     {% for item in items %}
                     <tr>
-                        <td><img src="{{ item.image_url }}" alt="Item Image" width="60"></td>
+                        <!-- Display image or fallback -->
+                        <td>
+                            {% if item.image_url %}
+                                <img src="{{ item.image_url }}" alt="Item Image" width="60" style="object-fit:cover; height:60px;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/60" alt="No Image" width="60" style="object-fit:cover; height:60px;">
+                            {% endif %}
+                        </td>
                         <td>{{ item.name }}</td>
                         <td>{{ item.description }}</td>
                         <td>{{ item.location }}</td>
                         <td>{{ item.userId }}</td>
                         <td>
-                            <a href="{{ url_for('admin_delete_item', item_id=item.id) }}" class="btn btn-sm btn-danger">Delete</a>
-                            <a href="{{ url_for('admin_mark_resolved', item_id=item.id) }}" class="btn btn-sm btn-success">Mark Resolved</a>
+                            <a href="{{ url_for('admin_delete_item', item_id=item.id) }}" class="btn btn-sm btn-danger mb-1">Delete</a>
+                            <a href="{{ url_for('admin_mark_resolved', item_id=item.id) }}" class="btn btn-sm btn-success mb-1">Mark Resolved</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -53,22 +60,22 @@
         {% endif %}
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
-<!-- Flash Messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="container mt-3">
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
-
 </html>

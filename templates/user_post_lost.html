@@ -24,24 +24,30 @@
                         <h4 class="mb-0">Post a Lost Item</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ url_for('user_post_lost') }}">
+                        <!-- IMPORTANT: enctype added for file upload -->
+                        <form method="POST" action="{{ url_for('user_post_lost') }}" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="item_name" class="form-label">Item Name</label>
                                 <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Enter item name" required>
                             </div>
+
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe the item" required></textarea>
                             </div>
+
                             <div class="mb-3">
                                 <label for="location" class="form-label">Location</label>
                                 <input type="text" class="form-control" id="location" name="location" placeholder="Where you lost it?" required>
                             </div>
-                            <!-- Optional image URL -->
+
+                            <!-- 📸 File Upload -->
                             <div class="mb-3">
-                                <label for="image_url" class="form-label">Image URL (optional)</label>
-                                <input type="text" class="form-control" id="image_url" name="image_url" placeholder="Paste image URL">
+                                <label for="image" class="form-label">Upload Image (optional)</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div class="form-text">Accepted formats: JPG, PNG, JPEG, GIF</div>
                             </div>
+
                             <button type="submit" class="btn btn-primary w-100">Post Item</button>
                         </form>
                     </div>
