@@ -21,6 +21,10 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Debug - list files
+          run: ls -R
+
+
       - name: Create and activate virtual environment
         run: |
           python -m venv venv
@@ -70,4 +74,5 @@ jobs:
         with:
           app-name: 'lostfound-app'
           slot-name: 'Production'
+
 
