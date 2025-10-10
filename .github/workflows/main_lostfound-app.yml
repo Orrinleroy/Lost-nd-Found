@@ -29,11 +29,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing files:"
-          ls -la
-          pip install -r requirements.txt
-        working-directory: ${{ github.workspace }}
+          pip install flask
+          pip install pyodbc
+          pip install werkzeug
+
+
         
       # Optional test step
       # - name: Run tests
