@@ -30,10 +30,10 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Current directory: $(pwd)"
+          echo "Listing files:"
           ls -la
-          pip install --upgrade pip
-          pip install -r ./requirements.txt
-        shell: bash
+          pip install -r requirements.txt
+        working-directory: ${{ github.workspace }}
         
       # Optional test step
       # - name: Run tests
