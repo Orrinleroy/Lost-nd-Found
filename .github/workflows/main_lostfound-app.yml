@@ -27,10 +27,12 @@ jobs:
           source venv/bin/activate
         shell: bash
 
+      - name: Debug - list all files
+        run: ls -R
+
       - name: Install dependencies
         run: |
-          ls -la
-          pip install -r requirements.txt
+          pip install -r static/requirements.txt
         
       # Optional test step
       # - name: Run tests
