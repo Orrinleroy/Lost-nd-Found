@@ -29,8 +29,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ls -la
+          ls -R
           pip install -r requirements.txt
+
         
       # Optional test step
       # - name: Run tests
@@ -69,3 +70,4 @@ jobs:
         with:
           app-name: 'lostfound-app'
           slot-name: 'Production'
+
