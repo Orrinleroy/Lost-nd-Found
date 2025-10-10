@@ -5,14 +5,297 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Browse Lost Items</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    h2 {
+      color: white;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      margin-bottom: 2rem;
+      animation: fadeInDown 0.6s ease-out;
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    form {
+      animation: fadeIn 0.6s ease-out 0.2s backwards;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    .input-group {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    
+    .form-control {
+      border: none;
+      padding: 0.85rem 1.25rem;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.98);
+    }
+    
+    .form-control:focus {
+      box-shadow: none;
+      background: white;
+    }
+    
+    .input-group .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 0.85rem 2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    
+    .input-group .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    }
+    
+    .card {
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    .row > div:nth-child(1) .card { animation-delay: 0.1s; }
+    .row > div:nth-child(2) .card { animation-delay: 0.2s; }
+    .row > div:nth-child(3) .card { animation-delay: 0.3s; }
+    .row > div:nth-child(4) .card { animation-delay: 0.4s; }
+    .row > div:nth-child(5) .card { animation-delay: 0.5s; }
+    .row > div:nth-child(6) .card { animation-delay: 0.6s; }
+    .row > div:nth-child(7) .card { animation-delay: 0.7s; }
+    .row > div:nth-child(8) .card { animation-delay: 0.8s; }
+    .row > div:nth-child(9) .card { animation-delay: 0.9s; }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-img-top {
+      transition: transform 0.4s ease;
+      position: relative;
+    }
+    
+    .card:hover .card-img-top {
+      transform: scale(1.1);
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .card-title {
+      font-weight: 700;
+      color: #2d3748;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .card-text {
+      color: #718096;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-outline-primary {
+      border: 2px solid #667eea;
+      color: #667eea;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 0.6rem;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .modal-content {
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: none;
+      padding: 1.5rem;
+    }
+    
+    .modal-title {
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-body {
+      padding: 2rem;
+    }
+    
+    .modal-body img {
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-body p {
+      color: #4a5568;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-body strong {
+      color: #2d3748;
+      font-weight: 600;
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    }
+    
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+    }
+    
+    .text-muted {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      color: #4a5568 !important;
+      font-size: 1.1rem;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .alert {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: slideDown 0.5s ease-out;
+      backdrop-filter: blur(10px);
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .shadow-sm {
+      box-shadow: none !important;
+    }
+    
+    .shadow-lg {
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    .h-100 {
+      height: 100% !important;
+    }
+    
+    .col-md-4 {
+      display: flex;
+    }
+    
+    .col-md-4 > .card {
+      width: 100%;
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        margin-bottom: 1.5rem;
+      }
+      
+      h2 {
+        font-size: 1.75rem;
+      }
+      
+      .input-group .btn-primary {
+        padding: 0.85rem 1.25rem;
+      }
+    }
+  </style>
 </head>
 <body>
   {% include 'navbar_user.html' %}
-
   <div class="container mt-4">
     <h2 class="mb-3 text-center">Browse Lost Items</h2>
-
     <!-- Search Form -->
     <form method="GET" action="{{ url_for('user_browse') }}" class="mb-4 mx-auto" style="max-width: 600px;">
       <div class="input-group">
@@ -20,7 +303,6 @@
         <button class="btn btn-primary" type="submit">Search</button>
       </div>
     </form>
-
     {% if items %}
     <div class="row">
       {% for item in items %}
@@ -36,7 +318,6 @@
           </div>
         </div>
       </div>
-
       <!-- Item Details Modal -->
       <div class="modal fade" id="itemModal{{ item.id }}" tabindex="-1" aria-labelledby="itemModalLabel{{ item.id }}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -62,7 +343,6 @@
       <p class="text-muted text-center">No lost items match your search or are available at the moment.</p>
     {% endif %}
   </div>
-
   <!-- Flash Messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -76,9 +356,7 @@
       </div>
     {% endif %}
   {% endwith %}
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
     async function copyPhone(itemId) {
       try {
