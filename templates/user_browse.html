@@ -1,62 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Lost Items</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Lost Items</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    {% include 'navbar_user.html' %}
+  {% include 'navbar_user.html' %}
 
-    <div class="container mt-4">
-        <h2 class="mb-3">Browse Lost Items</h2>
+  <div class="container mt-4">
+    <h2 class="mb-3 text-center">Browse Lost Items</h2>
 
-        <!-- Search Form -->
-        <form method="GET" action="{{ url_for('user_browse') }}" class="mb-4">
-            <div class="input-group">
-                <input type="text" class="form-control" name="q" placeholder="Search by item name or location" value="{{ search_query }}">
-                <button class="btn btn-primary" type="submit">Search</button>
-            </div>
-        </form>
+    <!-- Search Form -->
+    <form method="GET" action="{{ url_for('user_browse') }}" class="mb-4 mx-auto" style="max-width: 600px;">
+      <div class="input-group">
+        <input type="text" class="form-control" name="q" placeholder="Search by item name or location" value="{{ search_query }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </div>
+    </form>
 
-        {% if items %}
-        <div class="row">
-            {% for item in items %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="{{ item.image_url }}" class="card-img-top" alt="Item Image">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ item.name }}</h5>
-                        <p class="card-text">{{ item.description }}</p>
-                        <p class="card-text"><strong>Location:</strong> {{ item.location }}</p>
-                        <p class="card-text"><small class="text-muted">Posted by another user</small></p>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+    {% if items %}
+    <div class="row">
+      {% for item in items %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <img src="{{ item.image_url }}" class="card-img-top" alt="Item Image" style="height: 220px; object-fit: cover;">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="card-text text-muted">{{ item.location }}</p>
+            <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#itemModal{{ item.id }}">
+              View Details
+            </button>
+          </div>
         </div>
-        {% else %}
-        <p class="text-muted">No lost items match your search or are available at the moment.</p>
-        {% endif %}
+      </div>
+
+      <!-- Item Details Modal -->
+      <div class="modal fade" id="itemModal{{ item.id }}" tabindex="-1" aria-labelledby="itemModalLabel{{ item.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content shadow-lg">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="itemModalLabel{{ item.id }}">{{ item.name }}</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img src="{{ item.image_url }}" class="img-fluid rounded mb-3" alt="Item Image">
+              <p><strong>Description:</strong> {{ item.description }}</p>
+              <p><strong>Location:</strong> {{ item.location }}</p>
+              <button class="btn btn-success w-100" onclick="copyPhone('{{ item.id }}')">
+                📞 Copy Contact
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
+    {% else %}
+      <p class="text-muted text-center">No lost items match your search or are available at the moment.</p>
+    {% endif %}
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="container mt-3">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+  <script>
+    async function copyPhone(itemId) {
+      try {
+        const response = await fetch(`/get-phone/${itemId}`);
+        const data = await response.json();
+        if (data.phone) {
+          await navigator.clipboard.writeText(data.phone);
+          alert("📞 Contact number copied to clipboard!");
+        } else {
+          alert("❌ Phone number not available for this user.");
+        }
+      } catch (error) {
+        console.error("Error copying phone number:", error);
+        alert("⚠️ Failed to copy contact number. Please try again.");
+      }
+    }
+  </script>
 </body>
 </html>
