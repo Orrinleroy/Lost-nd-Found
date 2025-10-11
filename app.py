@@ -8,6 +8,7 @@ import re
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from flask import jsonify
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -46,7 +47,7 @@ def check_password(password, hashed_password):
     return hash_password(password) == hashed_password
 
 # -----------------------------
-# 🧱 TABLE CREATION
+# 🧱 table creation for local use
 # -----------------------------
 def create_tables():
     conn = get_db_connection()
@@ -124,11 +125,11 @@ def get_phone(item_id):
     phone = cursor.fetchone()
     conn.close()
 
-    if phone:
-        return {"phone": phone[0]}
+    if phone and phone[0]:
+        return jsonify({"phone": phone[0]})
     else:
-        return {"phone": None}
-
+        return jsonify({"phone": None})
+    
 # -----------------------------
 # 👤 USER ROUTES
 # -----------------------------
