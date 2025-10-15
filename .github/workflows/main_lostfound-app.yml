@@ -28,8 +28,9 @@ jobs:
         shell: bash
 
       - name: Install dependencies
-          source venv/bin/activate
         run: |
+          source venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
         
       # Optional test step
